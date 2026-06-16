@@ -1,0 +1,4 @@
+- `[x]` Criar utilitário de leitura de QR Code e parser em `src/commands/bill.ts`
+- `[x]` Implementar o callback de confirmação e criação da ordem de pagamento (Off-Ramp)
+- `[x]` Integrar os handlers de mensagem (foto e texto Pix) no `src/bot.ts`
+- `[x]` Validar tudo via typecheck e compilação

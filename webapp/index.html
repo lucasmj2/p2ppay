@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>P2P.me Trading Portal</title>
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <!-- Google Fonts: Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="./src/styles/main.css">
+  <link rel="stylesheet" href="./src/styles/layout.css">
+  <link rel="stylesheet" href="./src/styles/components.css">
+</head>
+<body class="loading">
+  <!-- Preloader overlay -->
+  <div id="app-preloader" class="preloader">
+    <div class="loader-spinner"></div>
+    <p>Inicializando P2P Ramps...</p>
+  </div>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="user-profile">
+        <div id="user-avatar" class="avatar">U</div>
+        <div class="user-meta">
+          <span id="user-name" class="username">Carregando...</span>
+          <div class="wallet-pill">
+            <span id="wallet-address" class="address">0x0000...0000</span>
+            <button id="btn-copy-address" class="btn-icon" title="Copiar Endereço">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-copy"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="network-badge">
+        <span class="status-indicator"></span>
+        Base Mainnet
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="app-content">
+      
+      <!-- TAB 1: DASHBOARD -->
+      <section id="tab-dashboard" class="tab-panel active">
+        <!-- Balance Card -->
+        <div class="balance-card">
+          <div class="card-blur-glow"></div>
+          <div class="balance-label">SALDO DISPONÍVEL</div>
+          <div class="balance-value"><span class="currency-symbol">USDC</span> <span id="balance-usdc">0.00</span></div>
+          <div class="balance-fiat" id="balance-fiat">R$ 0,00</div>
+          
+          <div class="quick-actions">
+            <button class="btn btn-action-buy action-trigger" data-target="buy">
+              <span class="btn-glow"></span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Comprar
+            </button>
+            <button class="btn btn-action-sell action-trigger" data-target="sell">
+              <span class="btn-glow"></span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Vender
+            </button>
+          </div>
+        </div>
+
+        <!-- Prices Widget -->
+        <div class="glass-panel price-widget">
+          <div class="widget-header">
+            <h3>Cotação P2P.me</h3>
+            <span class="price-change-badge positive">+0.42%</span>
+          </div>
+          <div class="price-row">
+            <div class="price-item">
+              <span class="label">Preço Compra</span>
+              <span class="value" id="price-buy">R$ 5,20</span>
+            </div>
+            <div class="divider"></div>
+            <div class="price-item">
+              <span class="label">Preço Venda</span>
+              <span class="value" id="price-sell">R$ 5,18</span>
+            </div>
+          </div>
+          <!-- Sparkline Chart -->
+          <div class="chart-container">
+            <svg id="price-sparkline" viewBox="0 0 300 80" preserveAspectRatio="none">
+              <!-- Animated gradient fill -->
+              <defs>
+                <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="rgba(0, 242, 254, 0.4)"/>
+                  <stop offset="100%" stop-color="rgba(0, 242, 254, 0)"/>
+                </linearGradient>
+              </defs>
+              <path class="chart-area" d="M 0 80 Q 50 40 100 50 T 200 20 T 300 30 L 300 80 L 0 80 Z" fill="url(#chart-grad)"></path>
+              <path class="chart-line" d="M 0 60 Q 50 40 100 50 T 200 20 T 300 30" fill="none" stroke="#00f2fe" stroke-width="2.5" stroke-linecap="round"></path>
+              <circle cx="300" cy="30" r="4" fill="#00f2fe"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Info / Tip Widget -->
+        <div class="glass-panel tip-widget">
+          <div class="tip-icon">💡</div>
+          <div class="tip-content">
+            <h4>Rede de Taxas Baixas</h4>
+            <p>Este bot opera na rede <b>Base</b> L2. O gás é cobrado em ETH e custa menos de $0.01 por transação.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: COMPRAR -->
+      <section id="tab-buy" class="tab-panel">
+        <div class="flow-step active" id="buy-step-input">
+          <h2 class="section-title">Comprar USDC</h2>
+          <p class="section-subtitle">Adquira USDC via PIX de forma imediata.</p>
+
+          <div class="input-group">
+            <label>VOCÊ ENVIA</label>
+            <div class="input-row">
+              <input type="number" id="buy-input-fiat" placeholder="0.00" min="10">
+              <span class="currency-tag">BRL (PIX)</span>
+            </div>
+            <div class="input-helper">Mínimo: R$ 10,00</div>
+          </div>
+
+          <div class="arrow-switch">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-down"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          </div>
+
+          <div class="input-group">
+            <label>VOCÊ RECEBE</label>
+            <div class="input-row">
+              <input type="number" id="buy-input-usdc" placeholder="0.00">
+              <span class="currency-tag">USDC</span>
+            </div>
+          </div>
+
+          <!-- Cost Summary -->
+          <div class="glass-panel summary-widget">
+            <div class="summary-row">
+              <span>Taxa P2P.me</span>
+              <span>Livre</span>
+            </div>
+            <div class="summary-row">
+              <span>Cotação Aplicada</span>
+              <span id="buy-summary-rate">R$ 5,20</span>
+            </div>
+          </div>
+
+          <button id="btn-next-buy" class="btn btn-primary btn-block">
+            Prosseguir
+          </button>
+        </div>
+
+        <!-- Confirm and Pix Screen -->
+        <div class="flow-step" id="buy-step-pix">
+          <h2 class="section-title">Realize o PIX</h2>
+          <p class="section-subtitle">Efetue o pagamento ao merchant parceiro para liberar seus fundos.</p>
+
+          <div class="pix-qr-container">
+            <div class="qr-glow-effect"></div>
+          <div class="pix-qr-container">
+            <div class="qr-glow-effect"></div>
+            <img id="pix-qr-image" class="qr-svg" src="" style="display: none; border-radius: 12px; background: white; padding: 10px;" alt="QR Code Pix">
+            <!-- Dummy QR Code rendered using SVG -->
+            <svg id="pix-qr-svg-placeholder" class="qr-svg" viewBox="0 0 100 100">
+              <rect x="0" y="0" width="100" height="100" fill="transparent" />
+              <!-- Corners -->
+              <rect x="5" y="5" width="20" height="20" fill="#00f2fe" />
+              <rect x="8" y="8" width="14" height="14" fill="#0a0a0f" />
+              <rect x="11" y="11" width="8" height="8" fill="#00f2fe" />
+
+              <rect x="75" y="5" width="20" height="20" fill="#00f2fe" />
+              <rect x="78" y="8" width="14" height="14" fill="#0a0a0f" />
+              <rect x="81" y="81" width="8" height="8" fill="#00f2fe" />
+
+              <rect x="5" y="75" width="20" height="20" fill="#00f2fe" />
+              <rect x="8" y="78" width="14" height="14" fill="#0a0a0f" />
+              <rect x="11" y="81" width="8" height="8" fill="#00f2fe" />
+              <!-- Noise pattern simulations -->
+              <rect x="35" y="15" width="10" height="30" fill="#00f2fe" opacity="0.8" />
+              <rect x="55" y="10" width="15" height="15" fill="#00f2fe" opacity="0.6" />
+              <rect x="30" y="55" width="40" height="10" fill="#00f2fe" opacity="0.7" />
+              <rect x="50" y="35" width="20" height="40" fill="#00f2fe" opacity="0.9" />
+              <rect x="75" y="75" width="20" height="20" fill="#00f2fe" />
+              <!-- center logo placeholder -->
+              <rect x="42" y="42" width="16" height="16" rx="4" fill="#9b51e0" />
+            </svg>
+          </div>
+
+          <div class="pix-timer">
+            Expira em: <span id="pix-countdown">14:59</span>
+          </div>
+
+          <div class="input-group">
+            <label>PIX COPIA E COLA</label>
+            <div class="copy-paste-row">
+              <input type="text" id="pix-copy-paste-key" value="00020126580014br.gov.bcb.pix0136e38b36a1-987d-4b82-aa0b-123456789p2p520400005303986540410.005802BR5913Merchant P2P6009Sao Paulo62070503***6304ABCD" readonly>
+              <button id="btn-copy-pix" class="btn btn-secondary">Copiar</button>
+            </div>
+          </div>
+
+          <div class="glass-panel tx-status-panel">
+            <div class="status-row">
+              <div class="spinner-small"></div>
+              <span>Aguardando recebimento do PIX...</span>
+            </div>
+          </div>
+
+          <button id="btn-cancel-buy" class="btn btn-danger btn-block">
+            Cancelar Operação
+          </button>
+        </div>
+      </section>
+
+      <!-- TAB 3: VENDER -->
+      <section id="tab-sell" class="tab-panel">
+        <h2 class="section-title">Vender USDC</h2>
+        <p class="section-subtitle">Converta seus USDC em BRL na sua conta PIX.</p>
+
+        <div class="input-group">
+          <label>QUANTIDADE PARA VENDER</label>
+          <div class="input-row">
+            <input type="number" id="sell-input-usdc" placeholder="0.00">
+            <span class="currency-tag">USDC</span>
+          </div>
+          <div class="input-helper">Saldo disponível: <span id="sell-balance-avail">0.00</span> USDC</div>
+        </div>
+
+        <!-- Slider selector -->
+        <div class="slider-container">
+          <input type="range" id="sell-slider" min="0" max="100" value="0" class="app-slider">
+          <div class="slider-labels">
+            <span>0%</span>
+            <span>25%</span>
+            <span>50%</span>
+            <span>75%</span>
+            <span>Max</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>CHAVE PIX (DESTINATÁRIO)</label>
+          <div class="input-row">
+            <input type="text" id="sell-pix-key" placeholder="CPF, e-mail, celular ou chave aleatória">
+          </div>
+          <div id="pix-validation-msg" class="validation-label"></div>
+        </div>
+
+        <!-- Estimate panel -->
+        <div class="glass-panel summary-widget">
+          <div class="summary-row">
+            <span>Você receberá estimado</span>
+            <span class="highlight-green" id="sell-estimate-fiat">R$ 0,00</span>
+          </div>
+        </div>
+
+        <button id="btn-execute-sell" class="btn btn-primary btn-block" disabled>
+          Vender USDC
+        </button>
+      </section>
+
+      <!-- TAB 4: PEDIDOS -->
+      <section id="tab-orders" class="tab-panel">
+        <h2 class="section-title">Seus Pedidos</h2>
+        <p class="section-subtitle">Acompanhe as suas transações ativas e histórico.</p>
+
+        <div class="orders-list" id="orders-list-container">
+          <!-- Dynamically populated or fallback empty -->
+          <div class="empty-state">
+            <div class="empty-icon">📋</div>
+            <h3>Nenhum pedido ativo</h3>
+            <p>Suas operações de compra e venda aparecerão aqui.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Navigation Tabs -->
+    <nav class="app-nav">
+      <button class="nav-item active" data-tab="dashboard">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        <span>Painel</span>
+      </button>
+      <button class="nav-item" data-tab="buy">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+        <span>Comprar</span>
+      </button>
+      <button class="nav-item" data-tab="sell">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span>Vender</span>
+      </button>
+      <button class="nav-item" data-tab="orders">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        <span>Pedidos</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Main scripts -->
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
